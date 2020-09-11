@@ -1,0 +1,45 @@
+<html>
+
+<head>
+    <script type="text/javascript">
+        var battery;
+        var notification = new Notification("Battery Watcher", {
+            body: "Battery State Monitor Is Running.. "
+        });
+
+        function readBattery(b) {
+            battery = b || battery;
+            var notification = new Notification("Battery Watcher", {
+                body: "Battery level " + (battery.level * 100) + "%"
+            });
+
+            battery.onchargingchange = () => console.log("charging changed");
+            battery.onlevelchange = (e) =>  { 
+                    console.log("level changed" + e.target.level) 
+                    var bt=document.getElementById("batteryTable")
+                    var newRow   = bt.insertRow();
+                    var newCell  = newRow.insertCell(0);
+                    var newText  = document.createTextNode("level changed" + ( e.target.level * 100 ) + "%");
+                    newCell.appendChild(newText);
+                };
+        }
+
+        if (navigator.battery) {
+            readBattery(navigator.battery);
+
+        } else if (navigator.getBattery) {
+            navigator.getBattery().then(readBattery);
+
+        } else {
+            document.querySelector('.not-support').removeAttribute('hidden');
+        }
+
+
+    </script>
+</head>
+
+<body>
+    <table id="batteryTable"></table>
+</body>
+
+</html>
